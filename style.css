@@ -1,0 +1,75 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #0a0a0a;
+    color: #e0e0e0;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #121212;
+    padding: 20px;
+  }
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+  }
+  nav a {
+    color: #1db954;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .search-bar {
+    padding: 20px;
+    background-color: #242424;
+  }
+  .search-bar input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #333333;
+    color: #f0f0f0;
+  }
+  .content {
+    padding: 20px;
+  }
+  .playlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  .playlist-card {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    color: #00bfff;
+  }
+  footer.player {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #242424;
+    padding: 20px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+  .controls button {
+    margin: 0 5px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #00bfff;
+    cursor: pointer;
+  }
+  .volume input {
+    width: 100px;
+  }
+
+  .controls i {
+    font-size: 30px;
+  }
