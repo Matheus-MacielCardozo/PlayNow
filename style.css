@@ -3,52 +3,61 @@ body {
     margin: 0;
     background-color: #0a0a0a;
     color: #e0e0e0;
-  }
-  header {
+}
+
+header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: #121212;
     padding: 20px;
-  }
-  nav ul {
+}
+
+nav ul {
     list-style: none;
     display: flex;
     gap: 20px;
-  }
-  nav a {
+}
+
+nav a {
     color: #1db954;
     text-decoration: none;
     font-weight: bold;
-  }
-  .search-bar {
+}
+
+.search-bar {
     padding: 20px;
     background-color: #242424;
-  }
-  .search-bar input {
+}
+
+.search-bar input {
     width: 100%;
     padding: 10px;
     border: none;
     border-radius: 5px;
     background-color: #333333;
     color: #f0f0f0;
-  }
-  .content {
+}
+
+.content {
     padding: 20px;
-  }
-  .playlist-grid {
+}
+
+.playlist-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
-  }
-  .playlist-card {
+}
+
+.playlist-card {
     background-color: #1e1e1e;
     padding: 20px;
     border-radius: 8px;
     text-align: center;
     color: #00bfff;
-  }
-  footer.player {
+}
+
+footer.player {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -57,19 +66,26 @@ body {
     position: fixed;
     bottom: 0;
     width: 100%;
-  }
-  .controls button {
+}
+
+.controls button {
     margin: 0 5px;
     background: none;
     border: none;
     font-size: 20px;
     color: #00bfff;
     cursor: pointer;
-  }
-  .volume input {
-    width: 100px;
-  }
+    transition: transform 0.3s easy;
+}
 
-  .controls i {
+.controls button:hover {
+    transform: scale(1.1);
+}
+
+.volume input {
+    width: 100px;
+}
+
+.controls i {
     font-size: 30px;
-  }
+}
