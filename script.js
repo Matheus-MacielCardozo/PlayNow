@@ -12,6 +12,9 @@ const linkPlaylist = document.getElementById('link-playlist')
 const screenHome = document.getElementById('main-screen')
 const screenSearch = document.getElementById('search-screen')
 const screenPlaylist = document.getElementById('playlist-screen')
+const searchInput = document.querySelector('#search-screen input')
+const newPlaylistInput = document.getElementById('new-playlist-name')
+const createPlaylistBtn = document.getElementById('create-playlist')
 
 const musics = [
     {
@@ -61,7 +64,14 @@ const musics = [
     }
 ]
 
+const playlists = []
+
 let currentSongIndex = 0
+
+if (localStorage.getItem('playlists')) {
+    playlists = JSON.parse(localStorage.getItem('playlists'));
+    updatePlaylists();
+}
 
 // Função para carregar a música
 function loadSong(index) {
@@ -135,6 +145,90 @@ function switchScreen(screenActive, linkActive) {
     linkActive.classList.add('ativa')
 }
 
+function showSearchResults(results) {
+    const container = document.querySelector('#search-screen .playlist-grid')
+    container.innerHTML = results.map(musics => `
+        <div class="playlist-card">
+            <h3>${musics.nome}</h3>
+            <p>${musics.artista}</p>
+        </div>
+        `).join('')
+}
+
+function createPlaylist() {
+    const nome = newPlaylistInput.value.trim()
+    if(!nome) return
+    
+    playlists.push({
+        nome: nome,
+        musicas: []
+    })
+    newPlaylistInput.value = ''
+    updatePlaylists()
+    savePlaylists()
+}
+
+function updatePlaylists() {
+    const container = document.querySelector('#playlist-screen .playlist-grid')
+    container.innerHTML = playlists.map((playlist, index) => `
+        <div class="playlist-card" data-index="${index}">
+            <h3>${playlists.nome}</h3>
+            <p>${playlists.musicas.length} músicas</p>
+            <div class="playlist-actions">
+                <button class="delete-playlist">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                    </svg>
+                </button>
+                <button class="edit-playlist">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                        <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                    </svg>
+                </button>
+        </div>
+    `).join('')
+    savePlaylists()
+}
+
+function savePlaylists() {
+    localStorage.setItem('playlists', JSON.stringify(playlists));
+}
+
+// Delegation para ações nas playlists
+document.querySelector('#playlist-screen .playlist-grid').addEventListener('click', (e) => {
+    const playlistIndex = e.target.closest('.playlist-card')?.dataset.index
+    
+    if (e.target.classList.contains('delete-playlist')) {
+        playlists.splice(playlistIndex, 1)
+        updatePlaylists()
+        savePlaylists()
+    }
+    
+    if (e.target.classList.contains('edit-playlist')) {
+        const newName = prompt('Novo nome da playlist:', playlists[playlistIndex].nome)
+        if (newName) {
+            playlists[playlistIndex].nome = newName
+            updatePlaylists()
+            savePlaylists()
+        }
+    }
+});
+
+// Adicione para adicionar músicas às playlists
+document.querySelector('#search-screen .playlist-grid').addEventListener('click', (e) => {
+    if (e.target.classList.contains('add-to-playlist')) {
+        const musicIndex = e.target.closest('.playlist-card')?.dataset.id
+        const selectedPlaylist = prompt(`Adicionar à qual playlist?\n${playlists.map((p, i) => `${i + 1} - ${p.nome}`).join('\n')}`)
+        
+        if (selectedPlaylist && playlists[selectedPlaylist - 1]) {
+            playlists[selectedPlaylist - 1].musicas.push(musics[musicIndex])
+            updatePlaylists()
+            savePlaylists()
+        }
+    }
+});
+
 // ---------------------- LISTENERS ------------------------------- \\
 
 // Event listener para o botão de play/pause
@@ -154,9 +248,6 @@ prevButton.addEventListener('click', prevSong)
 volumeControl.addEventListener('input', (e) => {
     audioElement.volume = e.target.value / 100
 })
-
-// Carrega a primeira música ao iniciar
-loadSong(currentSongIndex)
 
 // Atualizar a barra de progresso conforme a música é reproduzida
 audioElement.addEventListener('timeupdate', () => {
@@ -201,4 +292,19 @@ linkPlaylist.addEventListener('click', (e) => {
     switchScreen(screenPlaylist, linkPlaylist)
 })
 
+searchInput.addEventListener('input', (e) => {
+    const termo = e.target.value.toLowerCase()
+    const results = musics.filter(musics => 
+        musics.nome.toLowerCase().includes(termo) ||
+        musics.artista.toLowerCase().includes(termo)
+    )
+
+    showSearchResults(results)
+})
+
+createPlaylistBtn.addEventListener('click', createPlaylist)
+
 switchScreen(screenHome, linkHome)
+
+// Carrega a primeira música ao iniciar
+loadSong(currentSongIndex)
