@@ -14,20 +14,36 @@
         <h1>PlayNow</h1>
         <nav>
             <ul>
-                <li><a href="#">Inicio</a></li>
-                <li><a href="#">Buscar</a></li>
-                <li><a href="#">Biblioteca</a></li>
+                <li><a href="#" id="link-home">Inicio</a></li>
+                <li><a href="#" id="link-search">Buscar</a></li>
+                <li><a href="#" id="link-playlist">Biblioteca</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
-        <section class="search-bar">
+        <section id="main-screen" class="screen">
+            <section class="search-bar">
+                <input type="text" placeholder="Buscar músicas, álbuns, artistas...">
+            </section>
+    
+            <section class="content">
+                <h2>Playlists Recomendadas</h2>
+                <div class="playlist-grid">
+                    <div class="playlist-card">Playlist 1</div>
+                    <div class="playlist-card">Playlist 2</div>
+                    <div class="playlist-card">Playlist 3</div>
+                </div>
+            </section>
+        </section>
+        
+        <section id="search-screen" class="screen" style="display: none;">
+            <h2>Procurar músicas</h2>
             <input type="text" placeholder="Buscar músicas, álbuns, artistas...">
         </section>
 
-        <section class="content">
-            <h2>Playlists Recomendadas</h2>
+        <section id="playlist-screen" class="screen" style="display: none;">
+            <h2>Minha Biblioteca</h2>
             <div class="playlist-grid">
                 <div class="playlist-card">Playlist 1</div>
                 <div class="playlist-card">Playlist 2</div>

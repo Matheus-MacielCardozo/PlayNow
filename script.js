@@ -1,11 +1,17 @@
-const audioElement = document.getElementById('musics');
-const currentTime = document.getElementById('current-time');
-const musicDuration = document.getElementById('duration');
-const playButton = document.querySelector('.controls .bi-play');
-const nextButton = document.querySelector('.controls .bi-skip-forward');
-const prevButton = document.querySelector('.controls .bi-skip-backward');
-const volumeControl = document.querySelector('.volume input');
-const progressBar = document.getElementById('progress');
+const audioElement = document.getElementById('musics')
+const currentTime = document.getElementById('current-time')
+const musicDuration = document.getElementById('duration')
+const playButton = document.querySelector('.controls .bi-play')
+const nextButton = document.querySelector('.controls .bi-skip-forward')
+const prevButton = document.querySelector('.controls .bi-skip-backward')
+const volumeControl = document.querySelector('.volume input')
+const progressBar = document.getElementById('progress')
+const linkHome = document.getElementById('link-home')
+const linkSearch = document.getElementById('link-search')
+const linkPlaylist = document.getElementById('link-playlist')
+const screenHome = document.getElementById('main-screen')
+const screenSearch = document.getElementById('search-screen')
+const screenPlaylist = document.getElementById('playlist-screen')
 
 const musics = [
     {
@@ -53,17 +59,17 @@ const musics = [
         artista: 'MHRAP',
         arquivo: './Musics/Tipo Tobirama 2.mp3'
     }
-];
+]
 
-let currentSongIndex = 0;
+let currentSongIndex = 0
 
 // Função para carregar a música
 function loadSong(index) {
-    const song = musics[index];
-    audioElement.src = song.arquivo;
-    audioElement.load();
-    document.querySelector('.song-info p:first-child').textContent = song.nome;
-    document.querySelector('.song-info p:nth-child(2)').textContent = song.artista;
+    const song = musics[index]
+    audioElement.src = song.arquivo
+    audioElement.load()
+    document.querySelector('.song-info p:first-child').textContent = song.nome
+    document.querySelector('.song-info p:nth-child(2)').textContent = song.artista
 
     musicDuration.textContent = '0:00'
     currentTime.textContent = '0:00'
@@ -71,7 +77,7 @@ function loadSong(index) {
 
     audioElement.addEventListener('loadedmetadata', () => {
         if (!isNaN(audioElement.duration)) {
-            musicDuration.textContent = formatTime(audioElement.duration);
+            musicDuration.textContent = formatTime(audioElement.duration)
         }
     })
 }
@@ -79,32 +85,32 @@ function loadSong(index) {
 // Função para reproduzir a música
 function playSong() {
     audioElement.play().then(() => {
-        playButton.classList.remove('bi-play');
-        playButton.classList.add('bi-pause');
+        playButton.classList.remove('bi-play')
+        playButton.classList.add('bi-pause')
     }).catch((error) => {
-        console.error('Erro ao reproduzir o áudio:', error);
-    });
+        console.error('Erro ao reproduzir o áudio:', error)
+    })
 }
 
 // Função para pausar a música
 function pauseSong() {
-    audioElement.pause();
-    playButton.classList.remove('bi-pause');
-    playButton.classList.add('bi-play');
+    audioElement.pause()
+    playButton.classList.remove('bi-pause')
+    playButton.classList.add('bi-play')
 }
 
 // Função para avançar para a próxima música
 function nextSong() {
-    currentSongIndex = (currentSongIndex + 1) % musics.length;
-    loadSong(currentSongIndex);
-    playSong();
+    currentSongIndex = (currentSongIndex + 1) % musics.length
+    loadSong(currentSongIndex)
+    playSong()
 }
 
 // Função para voltar para a música anterior
 function prevSong() {
-    currentSongIndex = (currentSongIndex - 1 + musics.length) % musics.length;
-    loadSong(currentSongIndex);
-    playSong();
+    currentSongIndex = (currentSongIndex - 1 + musics.length) % musics.length
+    loadSong(currentSongIndex)
+    playSong()
 }
 
 function formatTime(timeInSeconds) {
@@ -113,33 +119,51 @@ function formatTime(timeInSeconds) {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
 }
 
+function switchScreen(screenActive, linkActive) {
+    // Oculta todas as telas
+    screenHome.classList.remove('ativa')
+    screenSearch.classList.remove('ativa')
+    screenPlaylist.classList.remove('ativa')
+
+    // Remove a classe "ativa" de todos os links
+    linkHome.classList.remove('ativa')
+    linkSearch.classList.remove('ativa')
+    linkPlaylist.classList.remove('ativa')
+
+    // Exibe a tela ativa e marca o link como ativo
+    screenActive.classList.add('ativa')
+    linkActive.classList.add('ativa')
+}
+
+// ---------------------- LISTENERS ------------------------------- \\
+
 // Event listener para o botão de play/pause
 playButton.addEventListener('click', () => {
     if (audioElement.paused) {
-        playSong();
+        playSong()
     } else {
-        pauseSong();
+        pauseSong()
     }
-});
+})
 
 // Event listeners para os botões de próximo e anterior
-nextButton.addEventListener('click', nextSong);
-prevButton.addEventListener('click', prevSong);
+nextButton.addEventListener('click', nextSong)
+prevButton.addEventListener('click', prevSong)
 
 // Event listener para o controle de volume
 volumeControl.addEventListener('input', (e) => {
-    audioElement.volume = e.target.value / 100;
-});
+    audioElement.volume = e.target.value / 100
+})
 
 // Carrega a primeira música ao iniciar
-loadSong(currentSongIndex);
+loadSong(currentSongIndex)
 
 // Atualizar a barra de progresso conforme a música é reproduzida
 audioElement.addEventListener('timeupdate', () => {
     currentTime.textContent = formatTime(audioElement.currentTime)
-    const progress = (audioElement.currentTime / audioElement.duration) * 100;
-    progressBar.value = progress;
-});
+    const progress = (audioElement.currentTime / audioElement.duration) * 100
+    progressBar.value = progress
+})
 
 // Atualizar o tempo total da música
 audioElement.addEventListener('loadedmetadata', () => {
@@ -150,14 +174,31 @@ audioElement.addEventListener('loadedmetadata', () => {
 
 // Permitir que o usuário arraste a barra para mudar o tempo da música
 progressBar.addEventListener('input', () => {
-    const seekTime = (progressBar.value / 100) * audioElement.duration;
-    audioElement.currentTime = seekTime;
-});
+    const seekTime = (progressBar.value / 100) * audioElement.duration
+    audioElement.currentTime = seekTime
+})
 
 // Tratamento de erros
 audioElement.addEventListener('error', () => {
-    console.error('Erro ao carregar o áudio. Verifique o caminho do arquivo e o formato.');
+    console.error('Erro ao carregar o áudio. Verifique o caminho do arquivo e o formato.')
     musicDuration.textContent = '0:00'
     currentTime.textContent = '0:00'
     progressBar.value = 0
-});
+})
+
+linkHome.addEventListener('click', (e) => {
+    e.preventDefault()
+    switchScreen(screenHome, linkHome)
+})
+
+linkSearch.addEventListener('click', (e) => {
+    e.preventDefault()
+    switchScreen(screenSearch, linkSearch)
+})
+
+linkPlaylist.addEventListener('click', (e) => {
+    e.preventDefault()
+    switchScreen(screenPlaylist, linkPlaylist)
+})
+
+switchScreen(screenHome, linkHome)

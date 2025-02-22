@@ -43,6 +43,11 @@ nav a {
     padding: 20px;
 }
 
+.content h2 {
+    margin-bottom: 20px;
+    color: #e0e0e0;
+}
+
 .playlist-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -55,6 +60,12 @@ nav a {
     border-radius: 8px;
     text-align: center;
     color: #00bfff;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.playlist-card:hover {
+    transform: scale(1.05);
 }
 
 footer.player {
@@ -218,3 +229,17 @@ footer.player {
 .volume input {
     width: 100px;
 }
+
+.screen {
+    display: none;
+}
+
+.screen.ativa {
+    display: block;
+}
+
+nav ul li a.ativa {
+    color: #00bfff;
+    font-weight: bold;
+}
+
