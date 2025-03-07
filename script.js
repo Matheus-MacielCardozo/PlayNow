@@ -15,6 +15,7 @@ const screenPlaylist = document.getElementById('playlist-screen')
 const searchInput = document.querySelector('#search-screen input')
 const newPlaylistInput = document.getElementById('new-playlist-name')
 const createPlaylistBtn = document.getElementById('create-playlist')
+const mainSearchInput = document.querySelector('#main-search')
 
 const musics = [
     {
@@ -64,10 +65,39 @@ const musics = [
     }
 ]
 
+const recommendedPlaylists = [
+    {
+        nome: "MHRAP Novas"
+    },
+    {
+        nome: "MHRAP Antigas"
+    },
+    {
+        nome: "blxck"
+    }
+]
+
 let playlists = JSON.parse(localStorage.getItem('playlists')) || []
 updatePlaylists()
 
 let currentSongIndex = 0
+
+// ---------------------- FUNCTIONS ------------------------------- \\
+
+// Função para iniciar e chamar a renderização das playlists
+function initMainScreen() {
+    renderRecommendedPlaylists(recommendedPlaylists)
+}
+
+// Função para renderizar as playlists
+function renderRecommendedPlaylists(playlists) {
+    const container = document.querySelector('#main-screen .playlist-grid')
+    container.innerHTML = playlists.map(playlist => `
+            <div class="playlist-card">
+                <h3>${playlist.nome}</h3>
+            </div>
+        `).join('');
+}
 
 // Função para carregar a música
 function loadSong(index) {
@@ -393,21 +423,34 @@ audioElement.addEventListener('error', () => {
     progressBar.value = 0
 })
 
+// Adiciona evento de busca na main
+mainSearchInput.addEventListener('input', (e) => {
+    const termo = e.target.value.toLowerCase();
+    const filtradas = recommendedPlaylists.filter(playlist => 
+        playlist.nome.toLowerCase().includes(termo)
+    );
+    renderRecommendedPlaylists(filtradas);
+});
+
+// Click para ir para main
 linkHome.addEventListener('click', (e) => {
     e.preventDefault()
     switchScreen(screenHome, linkHome)
 })
 
+// Click para ir para search
 linkSearch.addEventListener('click', (e) => {
     e.preventDefault()
     switchScreen(screenSearch, linkSearch)
 })
 
+// Click para ir para biblioteca
 linkPlaylist.addEventListener('click', (e) => {
     e.preventDefault()
     switchScreen(screenPlaylist, linkPlaylist)
 })
 
+// Adiciona evento de busca na search e biblioteca
 searchInput.addEventListener('input', (e) => {
     const termo = e.target.value.toLowerCase()
     const results = musics.filter(musics => 
@@ -418,9 +461,14 @@ searchInput.addEventListener('input', (e) => {
     showSearchResults(results)
 })
 
+// Click para criar a playlist
 createPlaylistBtn.addEventListener('click', createPlaylist)
 
+// Alternar as telas
 switchScreen(screenHome, linkHome)
 
 // Carrega a primeira música ao iniciar
 loadSong(currentSongIndex)
+
+// Inicia a main
+initMainScreen()

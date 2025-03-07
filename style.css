@@ -367,3 +367,16 @@ footer.player {
 main {
     padding-bottom: 120px;
 }
+
+.back-button {
+    background: none;
+    border: none;
+    color: #00bfff;
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
+
+#playlist-detail-screen .playlist-actions {
+    margin-bottom: 30px;
+}

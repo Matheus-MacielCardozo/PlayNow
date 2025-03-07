@@ -20,10 +20,12 @@
     </header>
 
     <main>
+
+        <!-- Tela principal -->
         <div class="screen-wrapper">
             <section id="main-screen" class="screen">
                 <section class="search-bar">
-                    <input type="text" placeholder="Buscar músicas, álbuns, artistas...">
+                    <input type="text" id="main-search" placeholder="Buscar músicas, álbuns, artistas...">
                 </section>
         
                 <section class="content">
@@ -36,6 +38,7 @@
                 </section>
             </section>
             
+            <!-- Tela para pesquisa -->
             <section id="search-screen" class="screen">
                 <h2>Procurar músicas</h2>
                 <section class="search-bar">
@@ -46,6 +49,7 @@
                 </div>
             </section>
 
+            <!-- Tela para biblioteca -->
             <section id="playlist-screen" class="screen">
                 <div class="playlist-actions">
                     <input type="text" id="new-playlist-name" placeholder="Nome da nova playlist">
@@ -61,6 +65,19 @@
                     <div id="playlist-songs" class="song-list"></div>
                 </div>
                 <div class="playlist-grid"></div>
+            </section>
+
+            <!-- Tela para playlists -->
+            <section id="playlist-detail-screen" class="screen">
+                <div class="content">
+                    <button class="button">&larr; Voltar</button>
+                    <h2 id="playlist-detail-title"></h2>
+                    <div class="playlist-actions">
+                        <input type="text" id="edit-playlist-name">
+                        <button id="save-playlist-name">Salvar</button>
+                    </div>
+                    <div id="playlist-songs" class="song-list"></div>
+                </div>
             </section>
         </div>
     </main>
