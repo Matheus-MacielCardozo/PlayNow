@@ -64,14 +64,10 @@ const musics = [
     }
 ]
 
-const playlists = []
+let playlists = JSON.parse(localStorage.getItem('playlists')) || []
+updatePlaylists()
 
 let currentSongIndex = 0
-
-if (localStorage.getItem('playlists')) {
-    playlists = JSON.parse(localStorage.getItem('playlists'));
-    updatePlaylists();
-}
 
 // Função para carregar a música
 function loadSong(index) {
@@ -111,53 +107,86 @@ function pauseSong() {
 
 // Função para avançar para a próxima música
 function nextSong() {
-    currentSongIndex = (currentSongIndex + 1) % musics.length
-    loadSong(currentSongIndex)
-    playSong()
+    if(currentPlayListIndex !== null) {
+        const currentIndex = currentPlayListSongs.findIndex(song => 
+            song.arquivo === musics[currentSongIndex].arquivo
+        )
+        const newIndex = (currentIndex + 1) % currentPlayListSongs.length
+        playSongFromPlaylist(newIndex)
+    } else {
+        currentSongIndex = (currentSongIndex + 1) % musics.length
+        loadSong(currentSongIndex) // Adicione o parâmetro faltante
+        playSong()
+    }
 }
 
 // Função para voltar para a música anterior
 function prevSong() {
-    currentSongIndex = (currentSongIndex - 1 + musics.length) % musics.length
-    loadSong(currentSongIndex)
-    playSong()
+    if(currentPlayListIndex !== null) {
+        const currentIndex = currentPlayListSongs.findIndex(song => 
+            song.arquivo === musics[currentSongIndex].arquivo
+        )
+        const newIndex = (currentIndex - 1 + currentPlayListSongs.length) % currentPlayListSongs.length
+        playSongFromPlaylist(newIndex)
+    } else {
+        currentSongIndex = (currentSongIndex - 1 + musics.length) % musics.length
+        loadSong(currentSongIndex) // Adicione o parâmetro faltante
+        playSong()
+    }
 }
 
+// Função para ajustar o formato do tempo
 function formatTime(timeInSeconds) {
     const minutes = Math.floor(timeInSeconds / 60)
     const seconds = Math.floor(timeInSeconds % 60)
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
 }
 
+// Função para trocar as telas
 function switchScreen(screenActive, linkActive) {
+    // Suavizar transição
+    document.querySelectorAll('.screen').forEach(screen => {
+        screen.style.transition = 'none';
+        void screen.offsetHeight;
+        screen.style.transition = '';
+    });
+    
     // Oculta todas as telas
-    screenHome.classList.remove('ativa')
-    screenSearch.classList.remove('ativa')
-    screenPlaylist.classList.remove('ativa')
+    screenHome.classList.remove('ativa');
+    screenSearch.classList.remove('ativa');
+    screenPlaylist.classList.remove('ativa');
 
     // Remove a classe "ativa" de todos os links
-    linkHome.classList.remove('ativa')
-    linkSearch.classList.remove('ativa')
-    linkPlaylist.classList.remove('ativa')
+    linkHome.classList.remove('ativa');
+    linkSearch.classList.remove('ativa');
+    linkPlaylist.classList.remove('ativa');
 
     // Exibe a tela ativa e marca o link como ativo
-    screenActive.classList.add('ativa')
-    linkActive.classList.add('ativa')
+    screenActive.classList.add('ativa');
+    linkActive.classList.add('ativa');
 }
 
+// Função para exibir os resultados da pesquisa
 function showSearchResults(results) {
     const container = document.querySelector('#search-screen .playlist-grid')
-    container.innerHTML = results.map(musics => `
-        <div class="playlist-card">
-            <h3>${musics.nome}</h3>
-            <p>${musics.artista}</p>
+    container.innerHTML = results.map((music, index) => `
+        <div class="playlist-card" data-id="${index}">
+            <h3>${music.nome}</h3>
+            <p>${music.artista}</p>
+            <button class="add-to-playlist">Adicionar à Playlist</button>
         </div>
         `).join('')
 }
 
+// Função para criar uma playlist
 function createPlaylist() {
     const nome = newPlaylistInput.value.trim()
     if(!nome) return
+
+    if(playlists.some(playlist => playlist.nome.toLowerCase() === nome.toLowerCase())) {
+        alert('Já existe uma playlist com esse nome!')
+        return
+    }
     
     playlists.push({
         nome: nome,
@@ -168,44 +197,119 @@ function createPlaylist() {
     savePlaylists()
 }
 
+// Função para atualizar uma playlist
 function updatePlaylists() {
     const container = document.querySelector('#playlist-screen .playlist-grid')
     container.innerHTML = playlists.map((playlist, index) => `
         <div class="playlist-card" data-index="${index}">
-            <h3>${playlists.nome}</h3>
-            <p>${playlists.musicas.length} músicas</p>
+            <h3>${playlist.nome}</h3>
+            <p>${playlist.musicas.length} músicas</p>
             <div class="playlist-actions">
                 <button class="delete-playlist">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
                         <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
                     </svg>
                 </button>
                 <button class="edit-playlist">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
                     </svg>
                 </button>
+            </div>
         </div>
     `).join('')
+
+    document.querySelectorAll('.playlist-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            if(!e.target.closest('.playlist-actions')) {
+                const index = parseInt(card.dataset.index)
+                showPlaylistSongs(index)
+            }
+        })
+    })
+
     savePlaylists()
 }
 
+// Função para salvar a playlist
 function savePlaylists() {
-    localStorage.setItem('playlists', JSON.stringify(playlists));
+    localStorage.setItem('playlists', JSON.stringify(playlists))
+}
+
+let currentPlayListIndex = null
+let currentPlayListSongs = []
+
+// Função para mostrar as músicas da playlist
+function showPlaylistSongs(index) {
+    const playlist = playlists[index]
+    if(!playlist) return
+    const container = document.getElementById('playlist-songs')
+    const title = document.getElementById('playlist-title')
+    const songsContainer = document.getElementById('playlist-songs-container')
+
+    currentPlayListIndex = index
+    currentPlayListSongs = playlist.musicas
+
+    title.textContent = playlist.nome
+    songsContainer.style.display = 'block'
+
+    container.innerHTML = `
+        <button class="play-all-button" onClick="playPlaylist()">Reproduzir Tudo</button>
+        ${playlist.musicas.map((song, i) => `
+            <div class="song-item" data-index="${i}" onClick="playSongFromPlaylist(${i})">
+                <div>
+                    <h4>${song.nome}</h4>
+                    <p>${song.artista}</p>
+                </div>
+                <button class="bi bi-play"></button> <!-- Corrigido classe do ícone -->
+            </div>
+        `).join('')}
+    `
+}
+
+// Função para tocar as músicas da playlist
+function playSongFromPlaylist(index) {
+    if(currentPlayListIndex !== null) {
+        currentSongIndex = musics.findIndex(song => 
+            song.arquivo === currentPlayListSongs[index].arquivo
+        )
+        loadSong(currentSongIndex)
+        playSong()
+    }
+}
+
+window.playPlaylist = function() {
+    if(currentPlayListSongs.length > 0) {
+        currentSongIndex = musics.findIndex(song => 
+            song.arquivo === currentPlayListSongs[0].arquivo
+        )
+
+        if(currentSongIndex !== -1) {
+            loadSong(currentSongIndex)
+            playSong()
+        } else {
+            alert("Músicas não encontradas na biblioteca!")
+        }
+        
+    }
 }
 
 // Delegation para ações nas playlists
 document.querySelector('#playlist-screen .playlist-grid').addEventListener('click', (e) => {
-    const playlistIndex = e.target.closest('.playlist-card')?.dataset.index
+    const deleteBtn = e.target.closest('.delete-playlist')
+    const editBtn = e.target.closest('.edit-playlist')
+    const playlistCard = e.target.closest('.playlist-card')
     
-    if (e.target.classList.contains('delete-playlist')) {
+    if (deleteBtn && playlistCard) {
+        const playlistIndex = playlistCard.dataset.index
         playlists.splice(playlistIndex, 1)
         updatePlaylists()
         savePlaylists()
     }
     
-    if (e.target.classList.contains('edit-playlist')) {
+    if (editBtn && playlistCard) {
+        const playlistIndex = playlistCard.dataset.index
         const newName = prompt('Novo nome da playlist:', playlists[playlistIndex].nome)
         if (newName) {
             playlists[playlistIndex].nome = newName
@@ -213,21 +317,33 @@ document.querySelector('#playlist-screen .playlist-grid').addEventListener('clic
             savePlaylists()
         }
     }
-});
+})
 
-// Adicione para adicionar músicas às playlists
+// Adicionar músicas às playlists
 document.querySelector('#search-screen .playlist-grid').addEventListener('click', (e) => {
-    if (e.target.classList.contains('add-to-playlist')) {
-        const musicIndex = e.target.closest('.playlist-card')?.dataset.id
+    const addBtn = e.target.closest('.add-to-playlist')
+    const musicCard = e.target.closest('.playlist-card')
+
+    if (addBtn && musicCard) {
+        const musicIndex = musicCard.dataset.id
         const selectedPlaylist = prompt(`Adicionar à qual playlist?\n${playlists.map((p, i) => `${i + 1} - ${p.nome}`).join('\n')}`)
         
-        if (selectedPlaylist && playlists[selectedPlaylist - 1]) {
-            playlists[selectedPlaylist - 1].musicas.push(musics[musicIndex])
-            updatePlaylists()
-            savePlaylists()
+        if (selectedPlaylist) {
+            const playlistIndex = parseInt(selectedPlaylist) - 1
+            if(playlists[playlistIndex] && musics[musicIndex]) {
+                const musicToAdd = {
+                    ...music[musicIndex]
+                }
+                playlists[playlistIndex].musicas.push(musicToAdd)
+                updatePlaylists()
+                savePlaylists()
+                alert('Musica adicionada com sucesso!')
+            } else {
+                alert('Playlist ou música inválida!')
+            }
         }
     }
-});
+})
 
 // ---------------------- LISTENERS ------------------------------- \\
 

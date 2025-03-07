@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <title>Document</title>
+    <title>PlayNow</title>
 </head>
-
 <body>
     <header>
         <h1>PlayNow</h1>
@@ -22,45 +20,49 @@
     </header>
 
     <main>
-        <section id="main-screen" class="screen">
-            <section class="search-bar">
-                <input type="text" placeholder="Buscar músicas, álbuns, artistas...">
-            </section>
-    
-            <section class="content">
-                <h2>Playlists Recomendadas</h2>
-                <div class="playlist-grid">
-                    <div class="playlist-card">Playlist 1</div>
-                    <div class="playlist-card">Playlist 2</div>
-                    <div class="playlist-card">Playlist 3</div>
-                </div>
-            </section>
-        </section>
+        <div class="screen-wrapper">
+            <section id="main-screen" class="screen">
+                <section class="search-bar">
+                    <input type="text" placeholder="Buscar músicas, álbuns, artistas...">
+                </section>
         
-        <section id="search-screen" class="screen">
-            <h2>Procurar músicas</h2>
-            <section class="search-bar">
-                <input type="text" placeholder="Buscar músicas, álbuns, artistas...">
+                <section class="content">
+                    <h2>Playlists Recomendadas</h2>
+                    <div class="playlist-grid">
+                        <div class="playlist-card">Playlist 1</div>
+                        <div class="playlist-card">Playlist 2</div>
+                        <div class="playlist-card">Playlist 3</div>
+                    </div>
+                </section>
             </section>
-            <div class="content">
-                <div class="playlist-grid">
+            
+            <section id="search-screen" class="screen">
+                <h2>Procurar músicas</h2>
+                <section class="search-bar">
+                    <input type="text" placeholder="Buscar músicas, álbuns, artistas...">
+                </section>
+                <div class="content">
+                    <div class="playlist-grid"></div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="playlist-screen" class="screen">
-            <div class="playlist-actions">
-                <input type="text" id="new-playlist-name" placeholder="Nome da nova playlist">
-                <button id="create-playlist">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
-                    </svg>
-                </button>
-            </div>
-            <h2>Minha Biblioteca</h2>
-            <div class="playlist-grid">
-            </div>
-        </section>
+            <section id="playlist-screen" class="screen">
+                <div class="playlist-actions">
+                    <input type="text" id="new-playlist-name" placeholder="Nome da nova playlist">
+                    <button id="create-playlist">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
+                        </svg>
+                    </button>
+                </div>
+                <h2>Minha Biblioteca</h2>
+                <div id="playlist-songs-container" style="display: none;">
+                    <h3 id="playlist-title"></h3>
+                    <div id="playlist-songs" class="song-list"></div>
+                </div>
+                <div class="playlist-grid"></div>
+            </section>
+        </div>
     </main>
 
     <footer class="player">
@@ -87,5 +89,4 @@
     </footer>
 </body>
 <script type="module" src="script.js"></script>
-
 </html>
